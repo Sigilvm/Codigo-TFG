@@ -4,11 +4,11 @@ import numpy as np
 import time
 from numba import jit, float64, prange
 
-quantity = 1000 #cantidad de agentes, habitualmente entre 2dim y 40dim
+quantity = 100 #cantidad de agentes, habitualmente entre 2dim y 40dim
 it_number = 1000 #numero de iteraciones
-dim = 30
+dim = 30 #dimension
 
-CP = 0.5 #crossover probability
+CP = 0.3 #crossover probability
 F = 0.8 #factor de mutación
 Range = 10 #rango sobre el que se generan (positivo y negativo)
 @jit(float64(float64[:]), nopython=True)
@@ -18,17 +18,17 @@ def f(p):
         a += p[i]**2
     return a
 ############################################
-
 def initAg():
     agents = []
     for i in range(quantity):
         agents.append(np.array([np.random.uniform(-Range,Range) for j in range(dim)], dtype=np.float64))
     return np.array(agents)
+
 @jit(nopython=True, parallel = True)
 def update(agents):
     result = np.empty_like(agents)
     for i in prange(quantity):
-        a0 = np.copy(agents[i]) #no se si hace falta copiarlo en realidad
+        a0 = np.copy(agents[i])
         idxs = np.array([idx for idx in range(quantity) if idx != i])
         parents = np.random.choice(idxs, 4, replace=False)
         a1 = agents[parents[0]]
@@ -52,31 +52,14 @@ def update(agents):
 if __name__ == "__main__":
     agents = initAg()
     for i in range(it_number):
-        if i == 1:
-            start = time.time()
         best = min([f(agents[i]) for i in range(quantity)])
         print(best)
         print(i)
         agents = update(agents)
-    end = time.time()
-    print("time: ", end-start)
 
 
 
-"""
-if __name__ == "__main__":
-    agents = initAg()
-    for i in range(it_number):
-        if i == 1:
-            start = time.time()
-        best = min([f(agents[i]) for i in range(quantity)])
-        print(best)
-        print(i)
-        agents = update(agents)
-    end = time.time()
-    print("time: ", end-start)
-"""
-
+        
 
 
 
