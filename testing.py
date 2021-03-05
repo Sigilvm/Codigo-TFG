@@ -7,7 +7,27 @@ from DE_granularidad import *
 from FA_granularidad import *
 from ABC_granularidad import *
 
+"""
+Dada una implementación como función de un algoritmo, hay dos cosas que puede interesar
+que devuelva: la evolución completa de la ejecución y el tiempo de ejecución. Las funciones
+que definidas en otros archivos para testear aquí devuelven una cosa u otra a fin de facilitar
+los testeos, pero la adaptación para obtener lo uno o lo otro (o algo distinto, como únicamente
+el vector final) son extremadamente sencillas una vez implementado el algoritmo en sí.
+"""
+
 def testVelocidades():
+    """
+    Esta función testea las velocidades de cada versión paralela y no paralela de cada algoritmo.
+    Se puede ejecutar tal y como está.
+    
+    Todo está definido en el propio cuerpo de la función. Para cambiar las funciones a testear,
+    hay que cambiar la lista "funs" que se define al principio. En el archivo "funciones.py" se
+    encuentran definidas todas las opciones. Con funs = funTodas se prueban todas.
+    Para cambiar el número de ejecuciones de donde sale la media, alterar el parámetros "numEjs",
+    que es una unidad mayor que el número de ejecuciones que se harán.
+    Para cambiar los parámetros, hacerlo en el cuerpo de las llamadas a los algoritmos (aunque no
+    afectan demasiado al tiempo de ejecución, que es lo que se testea). 
+    """
     funs = [fun2,fun3,fun8,funHimmel,funBooth]
     numEjs = 11
     for i in range(len(funs)):
@@ -89,6 +109,15 @@ def testVelocidades():
 
 
 def testGranularidadesPSO(reps,g1,l1,g2,l2,g3,l3,fun,args):
+    """
+    Esta función testea las distintas convergencias de las granularidades que se le indiquen, para el
+    algoritmo PSO.
+    Una llamada posible sería testGranularidadesPSO(10,1,1000,4,250,20,50,fun3,(100,10000,0.1,1.9,2.1))
+    La primera coordenada indica el número de ejecuciones del que obtener la media, las seis siguientes,
+    los tres pares de valores (cantidad de subproblemas, intervalos de comunicación) que definen la
+    granularidad, la octava debe ser una estructura "fun" de las definidas en "funciones.py" y la
+    novena es una terna con los parámetros del algoritmo.
+    """
     quantity, it_number, inertia, indiv, social = args
     o = PSOGran(quantity=quantity, it_number=it_number, dim=fun[1], Range=fun[2],VRange=fun[2],
             inertia=inertia, indiv=indiv, social=social, f=fun[0], gran=g1, lapso=l1) #primera llamada para descartar el tiempo de compilacion inicial
@@ -126,6 +155,15 @@ def testGranularidadesPSO(reps,g1,l1,g2,l2,g3,l3,fun,args):
     plt.show()
 
 def testGranularidadesDE(reps,g1,l1,g2,l2,g3,l3,fun,args):
+    """
+    Esta función testea las distintas convergencias de las granularidades que se le indiquen, para el
+    algoritmo DE.
+    Una llamada posible sería testGranularidadesDE(10,1,1000,4,250,20,50,fun3,(100,10000,0.8,0.8))
+    La primera coordenada indica el número de ejecuciones del que obtener la media, las seis siguientes,
+    los tres pares de valores (cantidad de subproblemas, intervalos de comunicación) que definen la
+    granularidad, la octava debe ser una estructura "fun" de las definidas en "funciones.py" y la
+    novena es una terna con los parámetros del algoritmo.
+    """
     quantity, it_number, CP, F = args
     o = DEGran(quantity=quantity, it_number=it_number, dim=fun[1], CP=CP, F=F,
            Range=fun[2], f=fun[0], gran=g1,lapso=l1) #primera llamada para descartar el tiempo de compilacion inicial
@@ -163,6 +201,15 @@ def testGranularidadesDE(reps,g1,l1,g2,l2,g3,l3,fun,args):
     plt.show()
     
 def testGranularidadesFA(reps,g1,l1,g2,l2,g3,l3,fun,args):
+    """
+    Esta función testea las distintas convergencias de las granularidades que se le indiquen, para el
+    algoritmo FA.
+    Una llamada posible sería testGranularidadesFA(10,1,1000,4,250,20,50,fun3,(100,400,0.01*200,0.98,1/(200**2),1))
+    La primera coordenada indica el número de ejecuciones del que obtener la media, las seis siguientes,
+    los tres pares de valores (cantidad de subproblemas, intervalos de comunicación) que definen la
+    granularidad, la octava debe ser una estructura "fun" de las definidas en "funciones.py" y la
+    novena es una terna con los parámetros del algoritmo.
+    """
     quantity, it_number, alfa0,reduct,gamma,beta0 = args
     o = FAGran(quantity=quantity, it_number=it_number, dim=fun[1], Range=fun[2],
            alfa0=alfa0,reduct=reduct,gamma=gamma,beta0=beta0, f=fun[0], gran=g1,lapso=l1)
@@ -200,6 +247,15 @@ def testGranularidadesFA(reps,g1,l1,g2,l2,g3,l3,fun,args):
     plt.show()
 
 def testGranularidadesABC(reps,g1,l1,g2,l2,g3,l3,fun,args):
+    """
+    Esta función testea las distintas convergencias de las granularidades que se le indiquen, para el
+    algoritmo ABC.
+    Una llamada posible sería testGranularidadesABC(10,1,1000,4,250,20,50,fun3,(100,5000,50*30))
+    La primera coordenada indica el número de ejecuciones del que obtener la media, las seis siguientes,
+    los tres pares de valores (cantidad de subproblemas, intervalos de comunicación) que definen la
+    granularidad, la octava debe ser una estructura "fun" de las definidas en "funciones.py" y la
+    novena es una terna con los parámetros del algoritmo.
+    """
     quantity, it_number, limit = args
     o = ABCGran(quantity=quantity, it_number=it_number, dim=fun[1], Range=fun[2],
            limit=limit, f=fun[0], gran=g1,lapso=l1)
@@ -235,6 +291,12 @@ def testGranularidadesABC(reps,g1,l1,g2,l2,g3,l3,fun,args):
     plt.scatter(*zip(*b_tiempos[:]),s=0.7)
     plt.scatter(*zip(*c_tiempos[:]),s=0.7)
     plt.show()
+
+
+
+
+
+
 
 
 
