@@ -96,7 +96,7 @@ def SCphase(sols,half,dim,Range,limit):
             sols[i][dim+1] = 0
     return sols
 
-def ABC(quantity, it_number, dim, Range, limit, f, gran,lapso):
+def ABCGran(quantity, it_number, dim, Range, limit, f, gran,lapso):
     start = time.time()
     half = int(quantity/2)
     sols = initSols(half,dim,Range)
@@ -120,6 +120,10 @@ def ABC(quantity, it_number, dim, Range, limit, f, gran,lapso):
             fbest = min(candidates)
     end = time.time()
     return (performance,fbest,end-start)
+
+
+
+
 
 
 
