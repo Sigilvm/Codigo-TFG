@@ -1,12 +1,10 @@
 import random as rd
-import matplotlib.pyplot as plt
 import numpy as np
-import time
 from numba import jit, float64, prange
 
 quantity = 2000 #cantidad de agentes, ha de ser un número par
 it_number = 100 #numero de iteraciones
-dim = 30
+dim = 30 #dimension
 
 half = int(quantity/2)
 Range = 100 #rango sobre el que se generan (positivo y negativo)
@@ -24,6 +22,16 @@ def fitness(p):
         return 1/(1+fvalue)
     else:
         return 1+np.abs(fvalue)
+@jit(nopython=True)
+def random_choice(half,probability_values):
+    u = np.sum(probability_values)
+    for i in prange(half):
+        r = np.random.uniform(0,u)
+        if r <= probability_values[i]:
+            result = i
+            break
+        u = u - probability_values[i]
+    return result
 ############################################
 @jit(nopython=True)
 def initSols():
@@ -32,6 +40,7 @@ def initSols():
         position0 = np.array([np.random.uniform(-Range,Range) for j in range(dim)], dtype=np.float64)
         sols[i][:dim] = position0
     return sols
+
 @jit(nopython=True, parallel=True)
 def EBphase(sols):
     for i in prange(half):
@@ -50,16 +59,7 @@ def employed_bee(sol, sols):
     else:
         sol[dim] = sol[dim] + 1 #aumentamos el conteo de intentos de mejoria
     return sol
-@jit(nopython=True)
-def random_choice(half,probability_values):
-    u = np.sum(probability_values)
-    for i in prange(half):
-        r = np.random.uniform(0,u)
-        if r <= probability_values[i]:
-            result = i
-            break
-        u = u - probability_values[i]
-    return result
+
 @jit(nopython=True, parallel=True)
 def OBphase(sols):
     fitness_values = np.array([fitness(sols[i][:dim]) for i in range(half)])
@@ -71,7 +71,6 @@ def OBphase(sols):
     for i in prange(half):
         sols[i] = onlooker_group(sols[i], sols)
     return sols
-
 @jit(nopython=True)
 def onlooker_group(sol, sols):
     for i in prange(int(sol[dim+1])):
@@ -86,6 +85,7 @@ def onlooker_group(sol, sols):
         else:
             sol[dim] = sol[dim] + 1 #aumentamos el conteo de intentos de mejoria
     return sol
+
 @jit(nopython=True)
 def SCphase(sols):
     for i in range(half):
@@ -98,39 +98,16 @@ def SCphase(sols):
 
 if __name__ == "__main__":
     sols = initSols()
-    best = min([f(sols[i][:dim]) for i in range(half)])
-    for i in range(it_number):
-        if i == 1:
-            start = time.time()
-            print("inicio")
-        print("iteracion numero :", i, ", mejor valor: ", best)
-        
-        sols = EBphase(sols)
-        sols = OBphase(sols)
-        sols = SCphase(sols)
-        best = min([f(sols[i][:dim]) for i in range(half)])
-    end = time.time()
-    print("tiempo de ejecucion: ", end-start)
-
-
-
-
-if __name__ == "__main__":
-    sols = initSols()
     candidates =[f(sols[i][:dim]) for i in range(half)]
     best = sols[candidates.index(min(candidates))]
     for i in range(it_number):
+        print("iteracion numero :", i, ", mejor valor: ", f(best))
         sols = EBphase(sols)
         sols = OBphase(sols)
         sols = SCphase(sols)
         candidates = [f(sols[i][:dim]) for i in range(half)]
         if min(candidates)<f(best):
             best = sols[candidates.index(min(candidates))]
-
-
-
-
-
 
 
 
