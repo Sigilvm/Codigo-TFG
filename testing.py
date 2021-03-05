@@ -8,9 +8,11 @@ from FA_granularidad import *
 from ABC_granularidad import *
 
 """
+Para comprender la estructura global de ficheros, leer el archivo "READ ME.md" del repositorio
+
 Dada una implementación como función de un algoritmo, hay dos cosas que puede interesar
 que devuelva: la evolución completa de la ejecución y el tiempo de ejecución. Las funciones
-que definidas en otros archivos para testear aquí devuelven una cosa u otra a fin de facilitar
+definidas en otros archivos para testear aquí devuelven una cosa u otra a fin de facilitar
 los testeos, pero la adaptación para obtener lo uno o lo otro (o algo distinto, como únicamente
 el vector final) son extremadamente sencillas una vez implementado el algoritmo en sí.
 """
@@ -291,6 +293,10 @@ def testGranularidadesABC(reps,g1,l1,g2,l2,g3,l3,fun,args):
     plt.scatter(*zip(*b_tiempos[:]),s=0.7)
     plt.scatter(*zip(*c_tiempos[:]),s=0.7)
     plt.show()
+
+
+
+
 
 
 
