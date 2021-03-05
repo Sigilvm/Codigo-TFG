@@ -35,7 +35,7 @@ def DEupdate(agents, quantity, dim, CP, F, f, gran, Range):
                 result[int(quantity/gran)*k+i] = a0
     return result
 
-def DE(quantity, it_number, dim, CP, F, Range, f, gran,lapso):
+def DEGran(quantity, it_number, dim, CP, F, Range, f, gran,lapso):
     start = time.time()
     agents = DEinitAg(quantity, dim, Range)
     best = min([f(agents[i]) for i in range(quantity)])
@@ -51,6 +51,7 @@ def DE(quantity, it_number, dim, CP, F, Range, f, gran,lapso):
         best = min([f(agents[i]) for i in range(quantity)])
     end = time.time()
     return (performance,best,end-start)
+
 
 
 
