@@ -37,9 +37,11 @@ def random_choice(half,probability_values):
             break
         u = u - probability_values[i]
     return result
+
 ######################################################
 #                    FA:
 ######################################################
+    
 def FAinitF(quantity, dim, Range):
     agents = []
     for i in range(quantity):
@@ -95,9 +97,11 @@ def FANP(quantity,it_number,dim,Range,alfa0,reduct,gamma,beta0,f):
         #print(i, best, alfa)
     end = time.time()
     return end-start
+
 ######################################################
 #                    DE:
 ######################################################
+
 def DEinitAg(quantity, dim, Range):
     agents = []
     for i in range(quantity):
@@ -107,7 +111,7 @@ def DEinitAg(quantity, dim, Range):
 def DEupdate(agents, quantity, dim, CP, F, f):
     result = np.empty_like(agents)
     for i in prange(quantity):
-        a0 = np.copy(agents[i]) #no se si hace falta copiarlo en realidad
+        a0 = np.copy(agents[i])
         idxs = np.array([idx for idx in range(quantity) if idx != i])
         parents = np.random.choice(idxs, 4, replace=False)
         a1 = agents[parents[0]]
@@ -169,9 +173,11 @@ def DENP(quantity, it_number, dim, CP, F, Range, f):
         agents = DENPupdate(agents, quantity, dim, CP, F, f)
     end = time.time()
     return end-start
+
 ######################################################
 #                    PSO:
 ######################################################
+
 @jit(nopython=True)
 def PSOinitAG(quantity,dim,Range,VRange):   #Genera la lista inicial de agentes, formato: [(posicion, velocidad, best)]
     agents = np.zeros((quantity,3,dim))
@@ -230,9 +236,11 @@ def PSONP(quantity, it_number, dim, Range, VRange, inertia, indiv, social, f):
         global_best = PSObest(agents,quantity,f)
     end = time.time()
     return end-start
+
 ######################################################
 #                    ABC:
 ######################################################
+
 @jit(nopython=True)
 def initSols(half,dim,Range):
     sols = np.zeros((half,dim+2))
@@ -319,7 +327,9 @@ def ABC(quantity, it_number, dim, Range, limit, f):
         sols = EBphase(sols,half,dim,f)
         sols = OBphase(sols,half,dim,f)
         sols = SCphase(sols,half,dim,Range,limit)
-        best = min([f(sols[i][:dim]) for i in range(half)])
+        aspirante = min([f(sols[i][:dim]) for i in range(half)])
+        if aspirante<best:
+            best = aspirante
     end = time.time()
     return end-start
 def ABCNP(quantity, it_number, dim, Range, limit, f):
@@ -332,12 +342,14 @@ def ABCNP(quantity, it_number, dim, Range, limit, f):
         sols = NPEBphase(sols,half,dim,f)
         sols = NPOBphase(sols,half,dim,f)
         sols = SCphase(sols,half,dim,Range,limit)
-        candidates = [f(sols[i][:dim]) for i in range(half)]
-        index = candidates.index(min(candidates))
-        if f(candidates[index])<f(best):
-            best = candidates[index]
+        aspirante = min([f(sols[i][:dim]) for i in range(half)])
+        if aspirante<best:
+            best = aspirante
     end = time.time()
     return end-start
+
+
+
 
 
 
