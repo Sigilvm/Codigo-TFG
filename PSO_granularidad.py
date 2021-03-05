@@ -44,7 +44,7 @@ def best(agents,quantity,f):   #Devuelve la mejor posicion global hasta el momen
     agent_index = candidates.index(min(candidates))
     return np.copy(agents[agent_index][2])
 
-def PSO(quantity, it_number, dim, Range, VRange, inertia, indiv, social, f, gran, lapso):
+def PSOGran(quantity, it_number, dim, Range, VRange, inertia, indiv, social, f, gran, lapso):
     start = time.time()
     agents = initAG(quantity,dim,Range,VRange)
     global_best = best(agents,quantity,f)
@@ -61,6 +61,7 @@ def PSO(quantity, it_number, dim, Range, VRange, inertia, indiv, social, f, gran
         
     end = time.time()
     return (performance,f(global_best),end-start)
+
 
 
 
