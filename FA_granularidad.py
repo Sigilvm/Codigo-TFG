@@ -75,7 +75,7 @@ def FAGran(quantity,it_number,dim,Range,alfa0,reduct,gamma,beta0,f,gran,lapso):
 
 
 
-
+ 
 
 
 
