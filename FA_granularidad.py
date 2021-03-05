@@ -36,7 +36,7 @@ def update(agents, alfa, quantity, dim, Range, gamma, beta0, f, gran):
             result[int(quantity/gran)*k + i] = new_agent
     return result
 
-def FA(quantity,it_number,dim,Range,alfa0,reduct,gamma,beta0,f,gran,lapso):
+def FAGran(quantity,it_number,dim,Range,alfa0,reduct,gamma,beta0,f,gran,lapso):
     start=time.time()
     agents = initF(quantity, dim, Range)
     best = min([f(agents[i]) for i in range(quantity)])
@@ -55,6 +55,10 @@ def FA(quantity,it_number,dim,Range,alfa0,reduct,gamma,beta0,f,gran,lapso):
 
     end=time.time()
     return (performance,best,end-start)
+
+
+
+
 
 
 
