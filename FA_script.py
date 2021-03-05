@@ -1,12 +1,10 @@
 import random as rd
-import matplotlib.pyplot as plt
 import numpy as np
-import time
 from numba import jit, float64, prange
 #Lista de parámetros:
-quantity = 300   #Cantidad de agentes 40
-it_number = 100 #Cantidad de iteraciones 100
-dim = 30 #30
+quantity = 300   #Cantidad de agentes
+it_number = 100 #Cantidad de iteraciones
+dim = 30 #dimension
 
 Range = 100       #Margen de búsqueda en cada dimensión
 alfa0 = 0.01*(2*Range)
@@ -14,6 +12,12 @@ reduct = 0.9
 gamma = 1/(2*Range)**2
 beta0 = 1
 #################################
+@jit(float64(float64[:]), nopython=True)
+def f(p):
+    a = 0
+    for i in prange(dim):
+        a += p[i]**2
+    return a
 @jit(nopython=True)
 def dist(a1, a2):
     new = np.empty_like(a1)
@@ -26,7 +30,7 @@ def dist(a1, a2):
 def initF():
     agents = []
     for i in range(quantity):
-        agents.append(np.array([rd.randrange(-Range,Range+1) for j in range(dim)], dtype=np.float64)) #faltaria el dtype=np.float64)
+        agents.append(np.array([rd.randrange(-Range,Range+1) for j in range(dim)], dtype=np.float64))
     return np.array(agents)
 
 @jit(nopython=True, parallel=True)
