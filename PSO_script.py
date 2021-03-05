@@ -10,7 +10,7 @@ social = 2.1  #peso de la mejor posicion hasta el momento
               #en el vecindario del agente
 quantity = 1000 #cantidad de agentes
 it_number = 1000 #numero de iteraciones
-dim = 30
+dim = 30 #dimension
 @jit(float64(float64[:]), nopython=True)
 def f(p):
     a = 0
@@ -19,15 +19,22 @@ def f(p):
     return a
 Range = 100 #rango sobre el que se generan (positivo y negativo)
 VRange = 100 #maxima velocidad inicial en cada coordenada (positivo y negativo)
-
 ###############################################################################
+@jit(nopython=True)
+def initAG():   #Genera la lista inicial de agentes, formato: [(posicion, velocidad, best)]
+    agents = np.zeros((quantity,3,dim))
+    for i in range(quantity):
+        position0 = np.array([rd.randrange(-Range,Range+1) for j in range(dim)], dtype=np.float64)
+        velocity0 = np.array([rd.randrange(-VRange,VRange+1) for j in range(dim)], dtype=np.float64)
+        best0 = np.copy(position0)
+        agents[i] = np.stack((position0,velocity0,best0))
+    return agents
 
 @jit(nopython=True, parallel=True)
 def update(agents,global_best):
     for i in prange(quantity):
         agents[i] = new_agent(agents[i],global_best)
     return agents
-
 @jit(nopython=True)
 def new_agent(agent,global_best):
     pos = agent[0]
@@ -42,42 +49,26 @@ def new_agent(agent,global_best):
         return np.stack((new_pos,new_v,new_pos))
     else:
         return np.stack((new_pos,new_v,p_best))
+
 @jit(nopython=True)
 def best(agents):   #Devuelve la mejor posicion global hasta el momento
     candidates = [f(agents[i][2]) for i in range(quantity)]   #lista de personal bests
     agent_index = candidates.index(min(candidates))
     return np.copy(agents[agent_index][2])
-@jit(nopython=True)
-def initAG():   #Genera la lista inicial de agentes, formato: [(posicion, velocidad, best)]
-    agents = np.zeros((quantity,3,dim))
-    for i in range(quantity):
-        position0 = np.array([rd.randrange(-Range,Range+1) for j in range(dim)], dtype=np.float64)
-        velocity0 = np.array([rd.randrange(-VRange,VRange+1) for j in range(dim)], dtype=np.float64)
-        best0 = np.copy(position0)
-        agents[i] = np.stack((position0,velocity0,best0))
-    return agents
 
 if __name__ == "__main__":
     agents = initAG()
     global_best = best(agents)
-    performance = []
     for i in range(it_number):
-        if i == 1:
-            start = time.time()
-        print("iteration: ", i)
-        #print('agentes: ', agents)
-        print("fValue: ", f(global_best))
-        performance.append((i,f(global_best)))
-        if f(global_best) > 1:
-            marca = i
+        print("iteracion: ", i)
+        print("valor de f: ", f(global_best))
         agents = update(agents,global_best)
         global_best = best(agents)
-    end = time.time()
-    #print(performance[0:20])
-    print('marca: ', marca)
-    plt.scatter(*zip(*performance[:]))
-    plt.show()
-    print('tiempo: ', end-start)
+
+
+
+
+
 
 
 
